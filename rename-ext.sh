@@ -19,7 +19,16 @@
 # - jpegoptim – to compress JPEGs
 
 
-ALL_EXTS='gif|jpe?g|jp2|a?png|web(p|m)|svg|eps|tga|tiff?|psd|ico|xcf|eot|otf|ttf|epub|doc|xls|swf|pdf|flac|opus|ogg|m4a|wav|mpe?g|mp\d|mov|mkv|avif?|asf|3gp|html?|sh|py|php'
+ALL_EXTS=`echo \
+  'gif|jpe?g|jp2|a?png|web(p|m)|svg
+  |eps|tga|tiff?|psd|ico|xcf|heic
+  |eot|otf|ttf|epub|doc|xls|swf|pdf
+  |flac|opus|ogg|m4a|wav
+  |mpe?g|mp\d|mov|mkv|avif?|asf|3gpp?
+  |html?|sh|py|php
+  ' \
+  |  tr -d '[:space:]' \
+  `
 
 OPTIONS=''
 NR='1'
@@ -141,6 +150,7 @@ for FILENAME in "$@"; do
   'image/x-eps') rename_ext "$FILENAME" 'eps' ;;
 
   # some less common image formats
+  'image/heic') rename_ext "$FILENAME" 'heic' ;;
   'image/tiff') rename_ext "$FILENAME" 'tiff' ;;
   'image/vnd.adobe.photoshop') rename_ext "$FILENAME" 'psd' ;;
   'image/vnd.microsoft.icon') rename_ext "$FILENAME" 'ico' ;;
