@@ -60,7 +60,6 @@ to only print a report:
 - https://github.com/dym-sh/rename-ext
 - https://gitlab.com/dym-sh/rename-ext
 - https://dym.sh/rename-ext
-- hyper://481757543392f8dec85e46ad50698efe8ded1a43c7f223cd21617180383e2b23 /[?](https://beakerbrowser.com)
 
 
 ## license
