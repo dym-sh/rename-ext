@@ -44,12 +44,34 @@ calc_reduction()
   echo "$RESULT"
 }
 
+ch_x()
+{
+  FILENAME="$1"
+  MODE=''
+  if [[ '1' == "$2" ]]; then
+    MODE='+x'
+  elif [[ '0' == "$2" ]]; then
+    MODE='-x'
+  fi
+
+
+  if [[ ! "$OPTIONS" =~ 'test-run' ]]; then
+    if [[ ! "$OPTIONS" =~ 'only-ext' ]]; then
+      echo "chmod $MODE $FILENAME"
+      chmod "$MODE" "$FILENAME"
+    fi
+  fi
+}
+
 rename_ext()
 {
   NAME="$1"
   EXT="$2"
   NOTE=''
   TARGET=''
+
+  ch_x "$FILENAME" 0
+
   if [[ "$OPTIONS" =~ 'only-ext' ]]; then
     NAME_NO_EXT=` echo "$NAME" \
            | sd -f i "(\.+($ALL_EXTS))$" '' \
@@ -57,7 +79,6 @@ rename_ext()
     TARGET="$NAME_NO_EXT.$EXT"
   else
     if [[ ! "$OPTIONS" =~ 'test-run' ]]; then
-      chmod -x "$FILENAME"
 
       SIZE_PRE=` stat "$FILENAME" -c '%s' `
 
@@ -165,7 +186,7 @@ for FILENAME in "$@"; do
   # documents
   'application/epub+zip') rename_ext "$FILENAME" 'epub' ;;
   'application/msword') rename_ext "$FILENAME" 'doc' ;;
-  'application/pdf') ;; # can be .ai
+  'application/pdf') ch_x "$FILENAME" 0 ;; # can be .ai
   'application/vnd.ms-excel') rename_ext "$FILENAME" 'xls' ;;
   'application/x-shockwave-flash') rename_ext "$FILENAME" 'swf' ;;
 
@@ -188,16 +209,16 @@ for FILENAME in "$@"; do
   'video/x-ms-asf') rename_ext "$FILENAME" 'asf' ;;
 
   # text
-  'application/json') ;; # can be any other language
-  'text/html') ;; # can be .htm, .htc, .mht, ...
+  'application/json') ch_x "$FILENAME" 0 ;; # can be any other language
+  'text/html') ch_x "$FILENAME" 0 ;; # can be .htm, .htc, .mht, ...
   'text/plain') ;; # can be any file with not enough text
   'text/x-python') ;; # can be .py3, have no .ext
   'text/x-shellscript') ;; # can be .zsh, have no .ext
 
   # special
   'application/octet-stream') ;; # can be anything
-  'inode/directory') ;; # a folder
-  'inode/x-empty') ;; # zero-size
+  'inode/directory') ch_x "$FILENAME" 1 ;; # a folder
+  'inode/x-empty') ch_x "$FILENAME" 0 ;; # zero-size
 
   # default
   *) echo "??  $FILENAME : $FILE_TYPE" ;;
